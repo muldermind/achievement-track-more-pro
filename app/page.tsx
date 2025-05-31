@@ -106,7 +106,7 @@ export default function Page() {
 
   return (
     <main className="bg-black min-h-screen p-8 text-white font-sans">
-      <h1 className="text-3xl font-bold mb-8 text-yellow-400">Vrijgezellenfeest Achievements</h1>
+      <h1 className="text-3xl font-bold mb-8 text-yellow-400">The Fellowship of the Luis</h1>
 
       <div className="flex gap-4 mb-8 flex-wrap">
         {categories.map((cat) => (
