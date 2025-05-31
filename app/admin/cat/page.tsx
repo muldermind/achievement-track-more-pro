@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { ref, onValue, push, update, remove, set } from "firebase/database";
+import { ref, onValue, update, remove, set } from "firebase/database";
 import { database } from "../../../firebaseConfig";
 import Link from "next/link";
 
@@ -11,7 +11,7 @@ export default function CategoriesPage() {
   const [editKey, setEditKey] = useState<string | null>(null);
 
   useEffect(() => {
-    const catRef = ref(database, "achievements/categories");
+    const catRef = ref(database, "categories");
     return onValue(catRef, (snapshot) => {
       const data = snapshot.val() || {};
       const result = Object.entries(data).map(([key, val]: any) => ({ key, ...val }));
@@ -23,16 +23,16 @@ export default function CategoriesPage() {
     if (!form.name) return;
     const newKey = form.name.toLowerCase().replace(/\s+/g, "-");
     if (editKey) {
-      update(ref(database, `achievements/categories/${editKey}`), form);
+      update(ref(database, `categories/${editKey}`), form);
       setEditKey(null);
     } else {
-      set(ref(database, `achievements/categories/${newKey}`), form);
+      set(ref(database, `categories/${newKey}`), form);
     }
     setForm({ name: "", published: true });
   };
 
   const handleDelete = (key: string) => {
-    remove(ref(database, `achievements/categories/${key}`));
+    remove(ref(database, `categories/${key}`));
   };
 
   const handleEdit = (cat: any) => {
