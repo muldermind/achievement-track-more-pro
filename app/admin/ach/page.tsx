@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ref, onValue, update, push, remove } from 'firebase/database';
+import { ref, onValue, update, push, remove, set } from 'firebase/database';
 import { database } from '../../../firebaseConfig';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Pencil, Trash2, RotateCw } from 'lucide-react';
@@ -78,7 +78,7 @@ export default function AchievementAdmin() {
       setEditId(null);
     } else {
       const newRef = push(ref(database, `categories/${selectedCat}/achievements`));
-      update(newRef, {
+      set(newRef, {
         title: form.title,
         description: form.description,
         image: form.image,
