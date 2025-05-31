@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -42,6 +41,8 @@ export default function Page() {
       const cats = Object.entries(data.categories || {})
         .filter(([, val]: any) => val.published)
         .map(([key]) => key);
+
+      console.log("Gevonden categorieën:", cats);
 
       const result: CategoryMap = {};
       for (const cat of cats) {
