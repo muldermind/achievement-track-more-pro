@@ -93,7 +93,10 @@ export default function AchievementAdmin() {
 
   const handleDelete = (id: string) => {
     if (!selectedCat) return;
-    remove(ref(database, `categories/${selectedCat}/achievements/${id}`));
+    const confirmDelete = window.confirm("Weet je zeker dat je deze achievement wilt verwijderen?");
+    if (confirmDelete) {
+      remove(ref(database, `categories/${selectedCat}/achievements/${id}`));
+    }
   };
 
   const handleReset = (id: string) => {
