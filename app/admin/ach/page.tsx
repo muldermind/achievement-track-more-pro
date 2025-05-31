@@ -24,7 +24,7 @@ export default function AchievementAdmin() {
   const [editId, setEditId] = useState<string | null>(null);
 
   useEffect(() => {
-    const catRef = ref(database, 'achievements/categories');
+    const catRef = ref(database, 'categories');
     return onValue(catRef, (snapshot) => {
       const data = snapshot.val() || {};
       const result = Object.entries(data)
@@ -39,7 +39,7 @@ export default function AchievementAdmin() {
 
   useEffect(() => {
     if (!selectedCat) return;
-    const achRef = ref(database, `achievements/${selectedCat}`);
+    const achRef = ref(database, `categories/${selectedCat}/achievements`);
     return onValue(achRef, (snapshot) => {
       const data = snapshot.val() || {};
       const result = Object.entries(data)
@@ -60,7 +60,7 @@ export default function AchievementAdmin() {
 
     const updates: any = {};
     reordered.forEach((item, i) => {
-      updates[`achievements/${selectedCat}/${item.id}/order`] = i;
+      updates[`categories/${selectedCat}/achievements/${item.id}/order`] = i;
     });
     update(ref(database), updates);
     setAchievements(reordered);
@@ -70,14 +70,14 @@ export default function AchievementAdmin() {
     if (!form.title || !form.description || !form.image || !selectedCat) return;
 
     if (editId) {
-      update(ref(database, `achievements/${selectedCat}/${editId}`), {
+      update(ref(database, `categories/${selectedCat}/achievements/${editId}`), {
         title: form.title,
         description: form.description,
         image: form.image,
       });
       setEditId(null);
     } else {
-      const newRef = push(ref(database, `achievements/${selectedCat}`));
+      const newRef = push(ref(database, `categories/${selectedCat}/achievements`));
       update(newRef, {
         title: form.title,
         description: form.description,
@@ -93,12 +93,12 @@ export default function AchievementAdmin() {
 
   const handleDelete = (id: string) => {
     if (!selectedCat) return;
-    remove(ref(database, `achievements/${selectedCat}/${id}`));
+    remove(ref(database, `categories/${selectedCat}/achievements/${id}`));
   };
 
   const handleReset = (id: string) => {
     if (!selectedCat) return;
-    update(ref(database, `achievements/${selectedCat}/${id}`), {
+    update(ref(database, `categories/${selectedCat}/achievements/${id}`), {
       completed: false,
       proof: null,
     });
