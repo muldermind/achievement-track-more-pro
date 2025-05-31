@@ -35,7 +35,7 @@ export default function Page() {
   let audio: HTMLAudioElement | null = null;
 
   useEffect(() => {
-    const dbRef = ref(database); // <-- rootniveau voor toegang tot achievements + categories
+    const dbRef = ref(database);
 
     const unsubscribe = onValue(dbRef, (snapshot) => {
       const data = snapshot.val() || {};
@@ -45,8 +45,8 @@ export default function Page() {
 
       const result: CategoryMap = {};
       for (const cat of cats) {
-        const catData = data.achievements?.[cat] || {};
-        result[cat] = Object.entries(catData)
+        const catAchievements = data.categories?.[cat]?.achievements || {};
+        result[cat] = Object.entries(catAchievements)
           .map(([id, val]: any) => ({ id, ...val }))
           .sort((a, b) => {
             if (a.completed && !b.completed) return -1;
@@ -86,7 +86,7 @@ export default function Page() {
     widget.done((file: any) => {
       file.promise().then((info: any) => {
         if (selectedId !== null && selectedCategory) {
-          const achievementRef = ref(database, `achievements/${selectedCategory}/${selectedId}`);
+          const achievementRef = ref(database, `categories/${selectedCategory}/achievements/${selectedId}`);
           update(achievementRef, {
             proof: info.cdnUrl,
             completed: true,
