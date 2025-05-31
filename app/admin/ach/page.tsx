@@ -20,7 +20,7 @@ export default function AchievementAdmin() {
   const [categories, setCategories] = useState<{ key: string; name: string }[]>([]);
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [form, setForm] = useState({ title: '', description: '', image: '' });
+  const [form, setForm] = useState({ title: '', description: '', image: '', category: '' });
   const [editId, setEditId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,15 +69,20 @@ export default function AchievementAdmin() {
   const handleAddOrUpdate = () => {
     if (!form.title || !form.description || !form.image || !selectedCat) return;
 
+    const targetCategory = form.category || selectedCat;
+
     if (editId) {
-      update(ref(database, `categories/${selectedCat}/achievements/${editId}`), {
+      update(ref(database, `categories/${targetCategory}/achievements/${editId}`), {
         title: form.title,
         description: form.description,
         image: form.image,
       });
+      if (targetCategory !== selectedCat) {
+        remove(ref(database, `categories/${selectedCat}/achievements/${editId}`));
+      }
       setEditId(null);
     } else {
-      const newRef = push(ref(database, `categories/${selectedCat}/achievements`));
+      const newRef = push(ref(database, `categories/${targetCategory}/achievements`));
       set(newRef, {
         title: form.title,
         description: form.description,
@@ -88,7 +93,7 @@ export default function AchievementAdmin() {
       });
     }
 
-    setForm({ title: '', description: '', image: '' });
+    setForm({ title: '', description: '', image: '', category: '' });
   };
 
   const handleDelete = (id: string) => {
@@ -113,20 +118,21 @@ export default function AchievementAdmin() {
       title: achievement.title,
       description: achievement.description,
       image: achievement.image,
+      category: selectedCat || '',
     });
   };
 
   return (
     <div className="p-4 min-h-screen bg-black text-white max-w-2xl mx-auto">
       <h1 className="text-xl font-bold mb-4">Admin: Achievements beheren</h1>
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 flex-wrap">
         {categories.map((cat) => (
           <button
             key={cat.key}
             onClick={() => {
               setSelectedCat(cat.key);
               setEditId(null);
-              setForm({ title: '', description: '', image: '' });
+              setForm({ title: '', description: '', image: '', category: '' });
             }}
             className={`px-4 py-2 border rounded font-bold ${
               selectedCat === cat.key ? 'bg-yellow-400 text-black' : 'bg-gray-800 text-white'
@@ -161,6 +167,17 @@ export default function AchievementAdmin() {
               onChange={(e) => setForm({ ...form, image: e.target.value })}
               className="w-full mb-2 p-2 rounded bg-gray-800 text-white"
             />
+            <select
+              value={form.category || selectedCat}
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              className="w-full mb-2 p-2 rounded bg-gray-800 text-white"
+            >
+              {categories.map((cat) => (
+                <option key={cat.key} value={cat.key}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
             <button onClick={handleAddOrUpdate} className="bg-green-500 px-4 py-2 rounded text-white font-bold">
               {editId ? 'Bijwerken' : 'Toevoegen'}
             </button>
