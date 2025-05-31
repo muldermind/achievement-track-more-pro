@@ -18,7 +18,7 @@ export default function CategoriesPage() {
   const [editingValue, setEditingValue] = useState('');
 
   useEffect(() => {
-    const categoriesRef = ref(database, 'achievements/categories');
+    const categoriesRef = ref(database, 'achievements/categories'); // aangepaste pad
     const unsubscribe = onValue(categoriesRef, (snapshot) => {
       const data = snapshot.val() || {};
       setCategories(data);
