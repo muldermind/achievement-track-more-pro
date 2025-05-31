@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ref, onValue, update, push, remove } from 'firebase/database';
-import { database } from '@/firebaseConfig';
+import { database } from '../../../firebaseConfig';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Pencil, Trash2, RotateCw } from 'lucide-react';
 
