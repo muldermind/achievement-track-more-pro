@@ -1,73 +1,50 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { database } from '../../../firebaseConfig'
-import {
-  ref,
-  update,
-  remove,
-  onValue,
-  set,
-} from 'firebase/database';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { ref, onValue, push, update, remove, set } from "firebase/database";
+import { database } from "../../../firebaseConfig";
+import Link from "next/link";
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<{ [key: string]: any }>({});
-  const [newCategory, setNewCategory] = useState('');
-  const [editingKey, setEditingKey] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState('');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [form, setForm] = useState({ name: "", published: true });
+  const [editKey, setEditKey] = useState<string | null>(null);
 
   useEffect(() => {
-    const categoriesRef = ref(database, 'achievements/categories'); // aangepaste pad
-    const unsubscribe = onValue(categoriesRef, (snapshot) => {
+    const catRef = ref(database, "achievements/categories");
+    return onValue(catRef, (snapshot) => {
       const data = snapshot.val() || {};
-      setCategories(data);
+      const result = Object.entries(data).map(([key, val]: any) => ({ key, ...val }));
+      setCategories(result);
     });
-    return () => unsubscribe();
   }, []);
 
-  const handleAddCategory = async () => {
-    if (!newCategory.trim()) return;
-    const newKey = newCategory.toLowerCase().replace(/\s+/g, '-');
-    await set(ref(database, `achievements/categories/${newKey}`), {
-      name: newCategory,
-      published: true,
-    });
-    setNewCategory('');
-  };
-
-  const handleDeleteCategory = async (key: string) => {
-    if (confirm('Weet je zeker dat je deze categorie wilt verwijderen?')) {
-      await remove(ref(database, `achievements/categories/${key}`));
+  const handleAddOrUpdate = () => {
+    if (!form.name) return;
+    const newKey = form.name.toLowerCase().replace(/\s+/g, "-");
+    if (editKey) {
+      update(ref(database, `achievements/categories/${editKey}`), form);
+      setEditKey(null);
+    } else {
+      set(ref(database, `achievements/categories/${newKey}`), form);
     }
+    setForm({ name: "", published: true });
   };
 
-  const handleEditCategory = async (key: string) => {
-    await update(ref(database, `achievements/categories/${key}`), {
-      name: editingValue,
-    });
-    setCategories((prev) => ({
-      ...prev,
-      [key]: { ...prev[key], name: editingValue },
-    }));
-    setEditingKey(null);
+  const handleDelete = (key: string) => {
+    remove(ref(database, `achievements/categories/${key}`));
   };
 
-  const togglePublished = async (key: string) => {
-    const current = categories[key]?.published;
-    await update(ref(database, `achievements/categories/${key}`), {
-      published: !current,
-    });
+  const handleEdit = (cat: any) => {
+    setEditKey(cat.key);
+    setForm({ name: cat.name, published: cat.published });
   };
 
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Categorieën beheren</h1>
-        <Link
-          href="/admin"
-          className="inline-block mb-4 text-yellow-400 hover:underline"
-        >
+        <Link href="/admin" className="inline-block mb-4 text-yellow-400 hover:underline">
           ← Terug naar admin
         </Link>
 
@@ -77,73 +54,51 @@ export default function CategoriesPage() {
             type="text"
             className="w-full p-2 rounded bg-slate-700 text-white mb-2"
             placeholder="Naam"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
+          <label className="flex items-center space-x-2 mb-2">
+            <input
+              type="checkbox"
+              checked={form.published}
+              onChange={(e) => setForm({ ...form, published: e.target.checked })}
+            />
+            <span>Gepubliceerd</span>
+          </label>
           <button
-            onClick={handleAddCategory}
+            onClick={handleAddOrUpdate}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
-            Toevoegen
+            {editKey ? "Bijwerken" : "Toevoegen"}
           </button>
         </div>
 
-        {Object.entries(categories).map(([key, value]) => (
-          <div
-            key={key}
-            className="bg-slate-800 p-4 rounded-xl mb-4 flex items-center justify-between"
-          >
-            {editingKey === key ? (
-              <input
-                className="bg-slate-700 p-2 rounded w-full mr-2"
-                value={editingValue}
-                onChange={(e) => setEditingValue(e.target.value)}
-              />
-            ) : (
-              <span className="font-bold">
-                {value.name}{' '}
-                {!value.published && (
-                  <span className="text-sm text-red-400">(concept)</span>
-                )}
-              </span>
-            )}
-
-            <div className="flex gap-2 ml-4">
-              {editingKey === key ? (
+        <ul className="space-y-2">
+          {categories.map((cat) => (
+            <li key={cat.key} className="flex items-center justify-between bg-slate-800 p-4 rounded">
+              <div>
+                <strong>{cat.name}</strong>
+                <p className="text-sm text-gray-400">
+                  Gepubliceerd: {cat.published ? "Ja" : "Nee"}
+                </p>
+              </div>
+              <div className="space-x-2">
                 <button
-                  onClick={() => handleEditCategory(key)}
-                  className="text-green-400 hover:text-green-300"
+                  onClick={() => handleEdit(cat)}
+                  className="bg-yellow-500 px-3 py-1 rounded text-black font-semibold"
                 >
-                  Opslaan
+                  Bewerken
                 </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      setEditingKey(key);
-                      setEditingValue(value.name);
-                    }}
-                    className="text-yellow-400 hover:text-yellow-300"
-                  >
-                    Bewerk
-                  </button>
-                  <button
-                    onClick={() => togglePublished(key)}
-                    className="text-blue-400 hover:text-blue-300"
-                  >
-                    {value.published ? 'Verberg' : 'Publiceer'}
-                  </button>
-                  <button
-                    onClick={() => handleDeleteCategory(key)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    Verwijder
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        ))}
+                <button
+                  onClick={() => handleDelete(cat.key)}
+                  className="bg-red-600 px-3 py-1 rounded text-white font-semibold"
+                >
+                  Verwijderen
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
