@@ -1,5 +1,5 @@
 // app/admin/layout.tsx
-import "../globals.css";
+import '../../styles/globals.css';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
