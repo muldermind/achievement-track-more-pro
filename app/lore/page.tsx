@@ -35,7 +35,7 @@ export default function LorePage() {
   useEffect(() => {
     const alreadySeen = localStorage.getItem('loreSeen');
     if (alreadySeen === 'true') {
-      router.push('/achievements');
+      router.push('/');
     }
   }, [router]);
 
@@ -44,7 +44,7 @@ export default function LorePage() {
       const audio = new Audio(SUCCESS_SOUND_URL);
       audio.play().catch(() => {});
       localStorage.setItem('loreSeen', 'true');
-      router.push('/achievements');
+      router.push('/');
     } else {
       setStep((prev) => prev + 1);
     }
