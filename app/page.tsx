@@ -35,18 +35,19 @@ export default function Page() {
   let audio: HTMLAudioElement | null = null;
 
   useEffect(() => {
-    const dbRef = ref(database);
+    const dbRef = ref(database, "categories");
 
     const unsubscribe = onValue(dbRef, (snapshot) => {
       const data = snapshot.val() || {};
-      const cats = Object.entries(data.categories || {})
+      const cats = Object.entries(data)
         .filter(([, val]: any) => val.published)
         .map(([key]) => key);
 
       const result: CategoryMap = {};
+
       for (const cat of cats) {
-        const catAchievements = data.categories?.[cat]?.achievements || {};
-        result[cat] = Object.entries(catAchievements)
+        const catData = data[cat]?.achievements || {};
+        result[cat] = Object.entries(catData)
           .map(([id, val]: any) => ({ id, ...val }))
           .sort((a, b) => {
             if (a.completed && !b.completed) return -1;
@@ -57,6 +58,7 @@ export default function Page() {
 
       setCategories(cats);
       setAchievements(result);
+
       if (!selectedCategory && cats.length > 0) {
         setSelectedCategory(cats[0]);
       }
