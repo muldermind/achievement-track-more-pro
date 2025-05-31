@@ -35,18 +35,17 @@ export default function Page() {
   let audio: HTMLAudioElement | null = null;
 
   useEffect(() => {
-    const dbRef = ref(database, "achievements");
+    const dbRef = ref(database); // <-- rootniveau voor toegang tot achievements + categories
+
     const unsubscribe = onValue(dbRef, (snapshot) => {
       const data = snapshot.val() || {};
       const cats = Object.entries(data.categories || {})
         .filter(([, val]: any) => val.published)
         .map(([key]) => key);
 
-      console.log("Gevonden categorieën:", cats);
-
       const result: CategoryMap = {};
       for (const cat of cats) {
-        const catData = data[cat] || {};
+        const catData = data.achievements?.[cat] || {};
         result[cat] = Object.entries(catData)
           .map(([id, val]: any) => ({ id, ...val }))
           .sort((a, b) => {
