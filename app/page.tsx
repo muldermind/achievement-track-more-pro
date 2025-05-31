@@ -34,6 +34,14 @@ export default function Page() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   let audio: HTMLAudioElement | null = null;
 
+  // Lore only shown on first visit
+  useEffect(() => {
+    const alreadySeen = localStorage.getItem('loreSeen');
+    if (alreadySeen !== 'true') {
+      window.location.href = '/lore';
+    }
+  }, []);
+
   useEffect(() => {
     const dbRef = ref(database, "categories");
 
