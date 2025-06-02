@@ -233,7 +233,7 @@ export default function Page() {
       {/* Lore opnieuw bekijken knop */}
       <button
         className="mt-12 text-sm text-yellow-400 hover:underline self-start"
-        onClick={() => router.push("/lore")}
+        onClick={() => router.push("/rereadlore")}
       >
         Bekijk de lore opnieuw
       </button>
