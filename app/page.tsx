@@ -56,12 +56,9 @@ export default function Page() {
           userRef,
           (snapshot) => {
             const userData = snapshot.val();
-            console.log("Firebase user data:", userData);
-            if (userData?.role === "uploader" || userData?.role === "viewer") {
-              setUserRole(userData.role);
-            } else {
-              console.warn("Geen geldige rol gevonden voor gebruiker");
-            }
+            const role = userData?.role || null;
+            console.log("Gebruikersrol geladen:", role);
+            setUserRole(role);
             setLoading(false);
           },
           { onlyOnce: true }
