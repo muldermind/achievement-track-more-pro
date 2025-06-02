@@ -1,6 +1,3 @@
 "use client";
-
-import { getAuth } from "firebase/auth";
-import { app } from "../../firebaseConfig"; // <-- dit is de juiste relatieve import
-
-export const auth = getAuth(app);
+import { auth } from "../../firebaseConfig"; // gebruik nu direct auth
+export { auth };
