@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 const loreData = [
   {
-    image: '/lore1.jpg',
+    image: 'https://ucarecdn.com/ab5d293c-91a8-408c-9ee7-1bd315a8ebcf/dia1.png',
     text: 'De Laatste Vrije Queeste\nLuisman — ook wel bekend als De Luis. Binnenkort laat hij zich vrijwillig ketenen aan prinses Juliette. Maar eerst wacht hem een laatste queeste. Twee nachten. Eén stad. Negen mannen. En nul schaamte.',
   },
   {
