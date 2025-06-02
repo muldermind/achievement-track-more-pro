@@ -142,11 +142,16 @@ export default function Page() {
     );
   }
 
+  const selectedAchievements = selectedCategory ? achievements[selectedCategory] : [];
+  const total = selectedAchievements.length;
+  const completed = selectedAchievements.filter((ach) => ach.completed).length;
+  const progress = total ? Math.round((completed / total) * 100) : 0;
+
   return (
     <main className="bg-black min-h-screen p-8 text-white font-sans flex flex-col">
       <h1 className="text-3xl font-bold mb-8 text-yellow-400">The Fellowship of the Luis</h1>
 
-      <div className="flex gap-4 mb-8 flex-wrap">
+      <div className="flex gap-4 mb-4 flex-wrap">
         {categories.map((cat) => (
           <button
             key={cat}
@@ -163,8 +168,21 @@ export default function Page() {
         ))}
       </div>
 
+      {/* Voortgangsbalk */}
+      <div className="mb-8">
+        <div className="text-sm mb-1 text-yellow-300 font-medium">
+          Progress: {completed} / {total} ({progress}%)
+        </div>
+        <div className="w-full bg-gray-700 rounded h-4">
+          <div
+            className="bg-yellow-400 h-4 rounded"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+      </div>
+
       <div className="space-y-4 max-w-md">
-        {(selectedCategory ? achievements[selectedCategory] : [])?.map((ach) => {
+        {selectedAchievements.map((ach) => {
           const isSelected = selectedId === ach.id;
           const cardBorder = ach.completed ? "border-gray-600" : "border-gray-700";
           const cardBg = ach.completed ? "bg-gray-800" : "bg-[#1a1a1a]";
@@ -212,7 +230,6 @@ export default function Page() {
         })}
       </div>
 
-      {/* Subtiele Uitlogknop */}
       <button
         className="mt-12 text-sm text-white opacity-50 hover:opacity-100 self-start"
         onClick={async () => {
