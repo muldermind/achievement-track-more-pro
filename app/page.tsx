@@ -230,8 +230,17 @@ export default function Page() {
         })}
       </div>
 
+      {/* Lore opnieuw bekijken knop */}
       <button
-        className="mt-12 text-sm text-white opacity-50 hover:opacity-100 self-start"
+        className="mt-12 text-sm text-yellow-400 hover:underline self-start"
+        onClick={() => router.push("/lore")}
+      >
+        Bekijk de lore opnieuw
+      </button>
+
+      {/* Uitlogknop */}
+      <button
+        className="mt-2 text-sm text-white opacity-50 hover:opacity-100 self-start"
         onClick={async () => {
           await auth.signOut();
           router.push("/login");
