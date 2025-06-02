@@ -35,7 +35,7 @@ export default function LorePage() {
   useEffect(() => {
     const alreadySeen = localStorage.getItem('loreSeen');
     if (alreadySeen === 'true') {
-      router.push('/app/login'); // ⬅️ Reeds gezien? Dan direct naar login
+      router.push('/login'); // ✅ aangepast van '/' naar '/login'
     }
   }, [router]);
 
@@ -44,7 +44,7 @@ export default function LorePage() {
       const audio = new Audio(SUCCESS_SOUND_URL);
       audio.play().catch(() => {});
       localStorage.setItem('loreSeen', 'true');
-      router.push('/app/login'); // ⬅️ Laatste slide: ga naar login
+      router.push('/login'); // ✅ aangepast van '/' naar '/login'
     } else {
       setStep((prev) => prev + 1);
     }
