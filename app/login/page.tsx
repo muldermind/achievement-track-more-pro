@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
-import { app } from "../../firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebaseClient";
 
 export default function LoginPage() {
   const router = useRouter();
-  const auth = getAuth(app);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +18,7 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/");
     } catch (err: any) {
-      setError(err.message);
+      setError("Login mislukt. Controleer je gegevens.");
     }
   };
 
