@@ -56,9 +56,14 @@ export default function Page() {
           userRef,
           (snapshot) => {
             const userData = snapshot.val();
-            const role = userData?.role || null;
-            console.log("Gebruikersrol geladen:", role);
-            setUserRole(role);
+            console.log("Gebruikersdata uit database:", userData);
+            if (userData && userData.role) {
+              setUserRole(userData.role);
+              console.log("Gebruikersrol geladen:", userData.role);
+            } else {
+              console.warn("Geen rol gevonden voor deze gebruiker.");
+              setUserRole(null);
+            }
             setLoading(false);
           },
           { onlyOnce: true }
@@ -67,6 +72,7 @@ export default function Page() {
         router.push("/login");
       }
     });
+
     return () => unsubscribe();
   }, [router]);
 
