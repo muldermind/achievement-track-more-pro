@@ -12,8 +12,7 @@ declare global {
 }
 
 const UPLOADCARE_PUBLIC_KEY = "d1217cd20d649c303bd6";
-const SUCCESS_SOUND_URL =
-  "https://ucarecdn.com/64e3ee89-cecf-4995-bb1b-ad7aef31cbb3/achievementsucces.mp3";
+const SUCCESS_SOUND_URL = "https://ucarecdn.com/64e3ee89-cecf-4995-bb1b-ad7aef31cbb3/achievementsucces.mp3";
 
 interface Achievement {
   id: string;
@@ -35,8 +34,10 @@ export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<"uploader" | "viewer" | null>(null);
+  const [loading, setLoading] = useState(true);
   let audio: HTMLAudioElement | null = null;
 
+  // Lore only shown on first visit
   useEffect(() => {
     const alreadySeen = localStorage.getItem("loreSeen");
     if (alreadySeen !== "true") {
@@ -44,19 +45,34 @@ export default function Page() {
     }
   }, []);
 
+  // Get user role
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const roleRef = ref(database, `users/${user.uid}/role`);
-        onValue(roleRef, (snapshot) => {
-          const role = snapshot.val();
-          setUserRole(role);
-        });
+        onValue(
+          roleRef,
+          (snapshot) => {
+            const role = snapshot.val();
+            if (role === "uploader" || role === "viewer") {
+              setUserRole(role);
+            } else {
+              console.warn("Geen geldige rol gevonden, standaard naar viewer");
+              setUserRole("viewer");
+            }
+            setLoading(false);
+          },
+          { onlyOnce: true }
+        );
+      } else {
+        window.location.href = "/login";
       }
     });
+
     return () => unsubscribe();
   }, []);
 
+  // Load achievement categories
   useEffect(() => {
     const dbRef = ref(database, "categories");
 
@@ -111,10 +127,7 @@ export default function Page() {
     widget.done((file: any) => {
       file.promise().then((info: any) => {
         if (selectedId !== null && selectedCategory) {
-          const achievementRef = ref(
-            database,
-            `categories/${selectedCategory}/achievements/${selectedId}`
-          );
+          const achievementRef = ref(database, `categories/${selectedCategory}/achievements/${selectedId}`);
           update(achievementRef, {
             proof: info.cdnUrl,
             completed: true,
@@ -122,9 +135,7 @@ export default function Page() {
         }
 
         if (audio) {
-          audio.play().catch((e) =>
-            console.warn("Geluid kon niet worden afgespeeld:", e)
-          );
+          audio.play().catch((e) => console.warn("Geluid kon niet worden afgespeeld:", e));
         }
 
         setSelectedId(null);
@@ -132,29 +143,24 @@ export default function Page() {
     });
   };
 
-  // Laat tijdelijk laadscherm zien totdat rol bekend is
-  if (userRole === null) {
+  if (loading || userRole === null) {
     return (
       <main className="bg-black min-h-screen flex items-center justify-center text-white">
-        <p className="text-lg">Laden...</p>
+        <p className="text-sm text-white">Laden...</p>
       </main>
     );
   }
 
   return (
     <main className="bg-black min-h-screen p-8 text-white font-sans">
-      <h1 className="text-3xl font-bold mb-8 text-yellow-400">
-        The Fellowship of the Luis
-      </h1>
+      <h1 className="text-3xl font-bold mb-8 text-yellow-400">The Fellowship of the Luis</h1>
 
       <div className="flex gap-4 mb-8 flex-wrap">
         {categories.map((cat) => (
           <button
             key={cat}
             className={`px-4 py-2 rounded font-semibold ${
-              selectedCategory === cat
-                ? "bg-yellow-400 text-black"
-                : "bg-gray-800 text-white"
+              selectedCategory === cat ? "bg-yellow-400 text-black" : "bg-gray-800 text-white"
             }`}
             onClick={() => {
               setSelectedCategory(cat);
@@ -167,62 +173,52 @@ export default function Page() {
       </div>
 
       <div className="space-y-4 max-w-md">
-        {(selectedCategory ? achievements[selectedCategory] : [])?.map(
-          (ach) => {
-            const isSelected = selectedId === ach.id;
-            const cardBorder = ach.completed
-              ? "border-gray-600"
-              : "border-gray-700";
-            const cardBg = ach.completed ? "bg-gray-800" : "bg-[#1a1a1a]";
+        {(selectedCategory ? achievements[selectedCategory] : [])?.map((ach) => {
+          const isSelected = selectedId === ach.id;
+          const cardBorder = ach.completed ? "border-gray-600" : "border-gray-700";
+          const cardBg = ach.completed ? "bg-gray-800" : "bg-[#1a1a1a]";
 
-            return (
+          return (
+            <div
+              key={ach.id}
+              className={`border ${cardBorder} ${cardBg} p-4 rounded flex flex-col gap-4 transition duration-300`}
+            >
               <div
-                key={ach.id}
-                className={`border ${cardBorder} ${cardBg} p-4 rounded flex flex-col gap-4 transition duration-300`}
+                className="flex gap-4 items-center cursor-pointer"
+                onClick={() => toggleAchievement(ach.id)}
               >
-                <div
-                  className="flex gap-4 items-center cursor-pointer"
-                  onClick={() => toggleAchievement(ach.id)}
-                >
-                  <img
-                    src={ach.image}
-                    alt="icon"
-                    className={`w-16 h-16 object-cover rounded ${
-                      ach.completed
-                        ? "filter grayscale-0 brightness-90"
-                        : "filter grayscale brightness-50"
-                    }`}
-                  />
-                  <div className="flex-1">
-                    <h2 className="font-semibold">{ach.title}</h2>
-                    <p>{ach.description}</p>
-                  </div>
+                <img
+                  src={ach.image}
+                  alt="icon"
+                  className={`w-16 h-16 object-cover rounded ${
+                    ach.completed
+                      ? "filter grayscale-0 brightness-90"
+                      : "filter grayscale brightness-50"
+                  }`}
+                />
+                <div className="flex-1">
+                  <h2 className="font-semibold">{ach.title}</h2>
+                  <p>{ach.description}</p>
                 </div>
-
-                {isSelected && ach.completed && ach.proof && (
-                  <img
-                    src={ach.proof}
-                    alt="proof"
-                    className="mt-2 w-full rounded"
-                  />
-                )}
-
-                {isSelected &&
-                  !ach.completed &&
-                  userRole === "uploader" && (
-                    <div className="mt-2">
-                      <button
-                        onClick={openUploadWidget}
-                        className="bg-yellow-400 text-black px-4 py-2 rounded font-semibold"
-                      >
-                        Upload bewijsfoto
-                      </button>
-                    </div>
-                  )}
               </div>
-            );
-          }
-        )}
+
+              {isSelected && ach.completed && ach.proof && (
+                <img src={ach.proof} alt="proof" className="mt-2 w-full rounded" />
+              )}
+
+              {isSelected && !ach.completed && userRole === "uploader" && (
+                <div className="mt-2">
+                  <button
+                    onClick={openUploadWidget}
+                    className="bg-yellow-400 text-black px-4 py-2 rounded font-semibold"
+                  >
+                    Upload bewijsfoto
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </main>
   );
