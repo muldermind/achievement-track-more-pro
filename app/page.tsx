@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ref, onValue, update } from "firebase/database";
 import { database, auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 declare global {
   interface Window {
@@ -35,40 +36,34 @@ export default function Page() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<"uploader" | "viewer" | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   let audio: HTMLAudioElement | null = null;
 
   useEffect(() => {
     const alreadySeen = localStorage.getItem("loreSeen");
     if (alreadySeen !== "true") {
-      window.location.href = "/lore";
+      router.push("/lore");
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log("Ingelogde gebruiker UID:", user.uid);
         const roleRef = ref(database, `users/${user.uid}/role`);
-        onValue(
-          roleRef,
-          (snapshot) => {
-            const role = snapshot.val();
-            if (role === "uploader" || role === "viewer") {
-              setUserRole(role);
-            } else {
-              setUserRole("viewer");
-            }
-            setLoading(false);
-          },
-          { onlyOnce: true }
-        );
+        onValue(roleRef, (snapshot) => {
+          const role = snapshot.val();
+          console.log("Rol uit database:", role);
+          setUserRole(role);
+          setLoading(false);
+        }, { onlyOnce: true });
       } else {
-        window.location.href = "/login";
+        router.push("/login");
       }
     });
-
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     const dbRef = ref(database, "categories");
@@ -101,15 +96,15 @@ export default function Page() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [selectedCategory]);
 
   const toggleAchievement = (id: string) => {
     setSelectedId((prev) => (prev === id ? null : id));
   };
 
   const openUploadWidget = () => {
-    if (!window.uploadcare) {
-      alert("Uploadcare is niet beschikbaar.");
+    if (typeof window === "undefined" || !window.uploadcare) {
+      alert("Uploadcare widget is niet geladen");
       return;
     }
 
@@ -123,14 +118,18 @@ export default function Page() {
 
     widget.done((file: any) => {
       file.promise().then((info: any) => {
-        if (selectedId && selectedCategory) {
+        if (selectedId !== null && selectedCategory) {
           const achievementRef = ref(database, `categories/${selectedCategory}/achievements/${selectedId}`);
           update(achievementRef, {
             proof: info.cdnUrl,
             completed: true,
           });
-          if (audio) audio.play().catch(() => {});
         }
+
+        if (audio) {
+          audio.play().catch((e) => console.warn("Geluid kon niet worden afgespeeld:", e));
+        }
+
         setSelectedId(null);
       });
     });
@@ -139,7 +138,7 @@ export default function Page() {
   if (loading) {
     return (
       <main className="bg-black min-h-screen flex items-center justify-center text-white">
-        <p className="text-sm">Laden...</p>
+        <p>Laden...</p>
       </main>
     );
   }
