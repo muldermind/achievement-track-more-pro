@@ -50,13 +50,10 @@ export default function Page() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log("Ingelogde gebruiker UID:", user.uid);
         const userRef = ref(database, `users/${user.uid}`);
         onValue(userRef, (snapshot) => {
           const userData = snapshot.val();
-          console.log("Ruwe gebruikersdata uit Firebase:", userData);
           const role = userData?.role || null;
-          console.log("Gebruikersrol geladen:", role);
           setUserRole(role);
           setLoading(false);
         }, { onlyOnce: true });
@@ -146,7 +143,7 @@ export default function Page() {
   }
 
   return (
-    <main className="bg-black min-h-screen p-8 text-white font-sans">
+    <main className="bg-black min-h-screen p-8 text-white font-sans flex flex-col">
       <h1 className="text-3xl font-bold mb-8 text-yellow-400">The Fellowship of the Luis</h1>
 
       <div className="flex gap-4 mb-8 flex-wrap">
@@ -214,6 +211,17 @@ export default function Page() {
           );
         })}
       </div>
+
+      {/* Subtiele Uitlogknop */}
+      <button
+        className="mt-12 text-sm text-white opacity-50 hover:opacity-100 self-start"
+        onClick={async () => {
+          await auth.signOut();
+          router.push("/login");
+        }}
+      >
+        Uitloggen
+      </button>
     </main>
   );
 }
