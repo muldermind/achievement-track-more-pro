@@ -5,23 +5,23 @@ import { useRouter } from 'next/navigation';
 
 const loreData = [
   {
-    image: 'https://ucarecdn.com/ab5d293c-91a8-408c-9ee7-1bd315a8ebcf/dia1.png',
+    image: 'https://ucarecdn.com/4f24a376-c7b0-44f7-bf31-4d5119187a1a/dia1kopie.jpg',
     text: 'De Laatste Vrije Queeste\nLuisman — ook wel bekend als De Luis. Binnenkort laat hij zich vrijwillig ketenen aan prinses Juliette. Maar eerst wacht hem een laatste queeste. Twee nachten. Eén stad. Negen mannen. En nul schaamte.',
   },
   {
-    image: '/lore2.jpg',
+    image: 'https://ucarecdn.com/eafba73c-c94e-44d1-bcea-f15c1476eeea/dia2.jpg',
     text: 'The Fellowship of the Luis\nAcht bondgenoten, elk met hun eigen talent (en zwakheden), hebben zich verzameld. Samen vormen zij The Fellowship of the Luis. Ze zijn hier met één doel: Luis bijstaan op zijn pad naar… iets met tapas en trauma’s.',
   },
   {
-    image: '/lore3.jpg',
+    image: 'https://ucarecdn.com/e4868b4a-949a-46ce-9b05-7a8f7885d5e1/dia3.jpg',
     text: 'De Achievements\nDe tracker bevat proeven. Soms lomp. Soms briljant. Altijd onvergetelijk. Elke voltooiing brengt Luis dichter bij onsterfelijkheid. Of op z’n minst bij de brunch op zondag.',
   },
   {
-    image: '/lore4.jpg',
+    image: 'https://ucarecdn.com/214ae6ea-4e42-48cb-839a-d907c72dadb9/dia4.jpg',
     text: 'De Stad der Verleiding\nBarcelona is prachtig. Verraderlijk. Onvergeeflijk. Hier wordt Luis getest: zijn trouw, zijn moed, zijn nieren. Slechts wie z’n bewijs levert — in beeld — zal erkend worden als held.',
   },
   {
-    image: '/lore5.jpg',
+    image: 'https://ucarecdn.com/b529b0a6-86a3-4a0b-a793-067113b30a8c/dia5.jpg',
     text: 'Het Avontuur Begint\nDit is je kompas. Jouw pad naar eer. Scroll. Bewijs. Upload. Vergeet niks. Verlies jezelf. En als je ooit denkt “moet dit nou?” — ja. Ja, het moet.\n\nLuis — het is tijd.',
   },
 ];
