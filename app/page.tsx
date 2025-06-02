@@ -51,13 +51,21 @@ export default function Page() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Ingelogde gebruiker UID:", user.uid);
-        const roleRef = ref(database, `users/${user.uid}/role`);
-        onValue(roleRef, (snapshot) => {
-          const role = snapshot.val();
-          console.log("Rol uit database:", role);
-          setUserRole(role);
-          setLoading(false);
-        }, { onlyOnce: true });
+        const userRef = ref(database, `users/${user.uid}`);
+        onValue(
+          userRef,
+          (snapshot) => {
+            const userData = snapshot.val();
+            console.log("Firebase user data:", userData);
+            if (userData?.role === "uploader" || userData?.role === "viewer") {
+              setUserRole(userData.role);
+            } else {
+              console.warn("Geen geldige rol gevonden voor gebruiker");
+            }
+            setLoading(false);
+          },
+          { onlyOnce: true }
+        );
       } else {
         router.push("/login");
       }
