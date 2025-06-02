@@ -1,6 +1,7 @@
 // firebaseConfig.js
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd43qF_f5qkN0Ti_tnJT2L2q9a9ZHF0_w",
@@ -16,7 +17,6 @@ const firebaseConfig = {
 // Singleton-safe init
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const auth = getAuth(app); // 👈 nodig voor login
 
-// ⛔️ Firebase Analytics wordt bewust niet geïnitieerd hier
-
-export { database };
+export { app, database, auth };
