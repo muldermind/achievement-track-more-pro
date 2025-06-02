@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { ref, onValue, update } from "firebase/database";
-import { database } from "../firebaseConfig";
+import { database, auth } from "../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 declare global {
   interface Window {
@@ -32,14 +33,27 @@ export default function Page() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<"uploader" | "viewer" | null>(null);
   let audio: HTMLAudioElement | null = null;
 
-  // Lore only shown on first visit
   useEffect(() => {
-    const alreadySeen = localStorage.getItem('loreSeen');
-    if (alreadySeen !== 'true') {
-      window.location.href = '/lore';
+    const alreadySeen = localStorage.getItem("loreSeen");
+    if (alreadySeen !== "true") {
+      window.location.href = "/lore";
     }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const roleRef = ref(database, `users/${user.uid}/role`);
+        onValue(roleRef, (snapshot) => {
+          const role = snapshot.val();
+          setUserRole(role);
+        });
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -167,7 +181,7 @@ export default function Page() {
                 <img src={ach.proof} alt="proof" className="mt-2 w-full rounded" />
               )}
 
-              {isSelected && !ach.completed && (
+              {isSelected && !ach.completed && userRole === "uploader" && (
                 <div className="mt-2">
                   <button
                     onClick={openUploadWidget}
