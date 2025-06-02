@@ -35,9 +35,9 @@ export default function Page() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<"uploader" | "viewer" | null>(null);
   const [loading, setLoading] = useState(true);
+
   let audio: HTMLAudioElement | null = null;
 
-  // Lore only shown on first visit
   useEffect(() => {
     const alreadySeen = localStorage.getItem("loreSeen");
     if (alreadySeen !== "true") {
@@ -45,7 +45,6 @@ export default function Page() {
     }
   }, []);
 
-  // Get user role
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -57,7 +56,6 @@ export default function Page() {
             if (role === "uploader" || role === "viewer") {
               setUserRole(role);
             } else {
-              console.warn("Geen geldige rol gevonden, standaard naar viewer");
               setUserRole("viewer");
             }
             setLoading(false);
@@ -72,7 +70,6 @@ export default function Page() {
     return () => unsubscribe();
   }, []);
 
-  // Load achievement categories
   useEffect(() => {
     const dbRef = ref(database, "categories");
 
@@ -111,8 +108,8 @@ export default function Page() {
   };
 
   const openUploadWidget = () => {
-    if (typeof window === "undefined" || !window.uploadcare) {
-      alert("Uploadcare widget is niet geladen");
+    if (!window.uploadcare) {
+      alert("Uploadcare is niet beschikbaar.");
       return;
     }
 
@@ -126,27 +123,23 @@ export default function Page() {
 
     widget.done((file: any) => {
       file.promise().then((info: any) => {
-        if (selectedId !== null && selectedCategory) {
+        if (selectedId && selectedCategory) {
           const achievementRef = ref(database, `categories/${selectedCategory}/achievements/${selectedId}`);
           update(achievementRef, {
             proof: info.cdnUrl,
             completed: true,
           });
+          if (audio) audio.play().catch(() => {});
         }
-
-        if (audio) {
-          audio.play().catch((e) => console.warn("Geluid kon niet worden afgespeeld:", e));
-        }
-
         setSelectedId(null);
       });
     });
   };
 
-  if (loading || userRole === null) {
+  if (loading) {
     return (
       <main className="bg-black min-h-screen flex items-center justify-center text-white">
-        <p className="text-sm text-white">Laden...</p>
+        <p className="text-sm">Laden...</p>
       </main>
     );
   }
