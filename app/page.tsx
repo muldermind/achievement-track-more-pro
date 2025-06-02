@@ -52,18 +52,14 @@ export default function Page() {
       if (user) {
         console.log("Ingelogde gebruiker UID:", user.uid);
         const userRef = ref(database, `users/${user.uid}`);
-        onValue(
-          userRef,
-          (snapshot) => {
-            const userData = snapshot.val();
-            console.log("Ruwe gebruikersdata uit Firebase:", userData);
-            const role = userData?.role || null;
-            console.log("Gebruikersrol geladen:", role);
-            setUserRole(role);
-            setLoading(false);
-          },
-          { onlyOnce: true }
-        );
+        onValue(userRef, (snapshot) => {
+          const userData = snapshot.val();
+          console.log("Ruwe gebruikersdata uit Firebase:", userData);
+          const role = userData?.role || null;
+          console.log("Gebruikersrol geladen:", role);
+          setUserRole(role);
+          setLoading(false);
+        }, { onlyOnce: true });
       } else {
         router.push("/login");
       }
