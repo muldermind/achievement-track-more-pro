@@ -26,7 +26,7 @@ const loreData = [
   },
 ];
 
-const SUCCESS_SOUND_URL = 'https://ucarecdn.com/64e3ee89-cecf-4995-bb1b-ad7aef31cbb3/achievementsucces.mp3';
+const SUCCESS_SOUND_URL = 'https://ucarecdn.com/992303e1-a77d-4652-9259-fc956c090f01/levelup2.mp3';
 
 export default function LorePage() {
   const [step, setStep] = useState(0);
