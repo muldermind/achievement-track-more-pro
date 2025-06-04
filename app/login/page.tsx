@@ -7,6 +7,7 @@ import { auth } from "../utils/firebaseClient";
 
 export default function LoginPage() {
   const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,13 +24,15 @@ export default function LoginPage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4">
-      {/* 🔥 Icoon boven formulier */}
+      {/* Branding icoon met glow */}
       <img
-        src="/icons/icon-192x192.png"
-        alt="App icoon"
-        className="w-24 h-24 mb-4 drop-shadow-lg"
+        src="/icons/icon-512x512.png"
+        alt="Logo"
+        className="w-24 h-24 mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
       />
+
       <h1 className="text-3xl font-bold mb-6">Log in</h1>
+
       <form onSubmit={handleLogin} className="w-full max-w-sm space-y-4">
         <input
           type="email"
