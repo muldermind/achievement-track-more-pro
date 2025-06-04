@@ -28,7 +28,7 @@ export default function LoginPage() {
       <img
         src="/icons/icon-512x512.png"
         alt="Logo"
-        className="w-24 h-24 mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
+        className="w-224 h-224 mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
       />
 
       <h1 className="text-3xl font-bold mb-6">Log in</h1>
