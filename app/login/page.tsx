@@ -24,11 +24,11 @@ export default function LoginPage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4">
-      {/* Branding icoon met glow */}
+      {/* Branding icoon zonder glow of schaduw */}
       <img
         src="/icons/fellowship.png"
         alt="Logo"
-        className="w-500 h-500 mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
+        className="w-200 h-200 mb-4"
       />
 
       <h1 className="text-3xl font-bold mb-6">Log in</h1>
