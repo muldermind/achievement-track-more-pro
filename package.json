@@ -13,7 +13,8 @@
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "18.2.0",
-    "lucide-react": "^0.292.0"
+    "lucide-react": "^0.292.0",
+    "@vercel/analytics": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.4.2",
