@@ -1,10 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/utils/firebaseClient';
-
 import { ref, onValue, update, push, remove, set } from 'firebase/database';
 import { database } from '../../../firebaseConfig';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
@@ -21,27 +17,12 @@ interface Achievement {
 }
 
 export default function AchievementAdmin() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<{ key: string; name: string }[]>([]);
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [form, setForm] = useState({ title: '', description: '', image: '', category: '' });
   const [editId, setEditId] = useState<string | null>(null);
 
-  // 🔐 Toegangscontrole
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user || user.email !== 'admin@tracker.app') {
-        router.push('/login');
-      } else {
-        setLoading(false);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // 🔄 Laad categorieën
   useEffect(() => {
     const catRef = ref(database, 'categories');
     return onValue(catRef, (snapshot) => {
@@ -56,7 +37,6 @@ export default function AchievementAdmin() {
     });
   }, []);
 
-  // 🔄 Laad achievements per categorie
   useEffect(() => {
     if (!selectedCat) return;
     const achRef = ref(database, `categories/${selectedCat}/achievements`);
@@ -142,14 +122,6 @@ export default function AchievementAdmin() {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p className="text-lg">Bezig met controleren...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="p-4 min-h-screen bg-black text-white max-w-2xl mx-auto">
       <h1 className="text-xl font-bold mb-4">Admin: Achievements beheren</h1>
@@ -232,7 +204,10 @@ export default function AchievementAdmin() {
                             )}
                           </div>
                           <div className="flex space-x-2">
-                            <button onClick={() => handleEdit(ach)} className="text-yellow-400 hover:text-yellow-600">
+                            <button
+                              onClick={() => handleEdit(ach)}
+                              className="text-yellow-400 hover:text-yellow-600"
+                            >
                               <Pencil size={16} />
                             </button>
                             {ach.completed && (
@@ -243,7 +218,10 @@ export default function AchievementAdmin() {
                                 <RotateCw size={16} />
                               </button>
                             )}
-                            <button onClick={() => handleDelete(ach.id)} className="text-red-400 hover:text-red-600">
+                            <button
+                              onClick={() => handleDelete(ach.id)}
+                              className="text-red-400 hover:text-red-600"
+                            >
                               <Trash2 size={16} />
                             </button>
                           </div>
