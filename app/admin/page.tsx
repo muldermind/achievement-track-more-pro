@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { auth } from "@/app/utils/firebaseClient"; // ✅ juiste import voor Vercel
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../utils/firebaseClient"; // <- FIXED!
 
-export default function AdminHome() {
+export default function AdminPage() {
   const router = useRouter();
-  const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -20,6 +20,7 @@ export default function AdminHome() {
       }
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, [router]);
 
