@@ -26,9 +26,9 @@ export default function LoginPage() {
     <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4">
       {/* Branding icoon met glow */}
       <img
-        src="/icons/icon-512x512.png"
+        src="/icons/fellowship.png"
         alt="Logo"
-        className="w-224 h-224 mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
+        className="w-500 h-500 mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
       />
 
       <h1 className="text-3xl font-bold mb-6">Log in</h1>
