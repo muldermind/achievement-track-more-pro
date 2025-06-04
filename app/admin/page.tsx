@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../utils/firebaseClient";
+import { auth } from '@/utils/firebaseClient';
 import Link from "next/link";
 
 export default function AdminHome() {
