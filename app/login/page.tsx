@@ -28,7 +28,7 @@ export default function LoginPage() {
       <img
         src="/icons/fellowship.png"
         alt="Logo"
-        className="w-200 h-200 mb-4"
+        className="w-100 h-100 mb-4"
       />
 
       <h1 className="text-3xl font-bold mb-6">Log in</h1>
