@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { auth } from "../../utils/firebaseClient"; // ✅ correct pad
+import { auth } from "@/app/utils/firebaseClient"; // ✅ juiste import voor Vercel
 
 export default function AdminHome() {
   const router = useRouter();
