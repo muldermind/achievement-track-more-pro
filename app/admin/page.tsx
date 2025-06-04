@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../utils/firebaseClient"; // <- FIXED!
+import { useRouter } from "next/navigation";
+import { auth } from "../utils/firebaseClient"; // <-- DIT is nu correct
 
-export default function AdminPage() {
+export default function AdminHome() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -20,7 +20,6 @@ export default function AdminPage() {
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, [router]);
 
