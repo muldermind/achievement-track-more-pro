@@ -1,8 +1,36 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { auth } from "@/utils/firebaseClient";
+
+const ADMIN_EMAIL = "admin@tracker.app";
 
 export default function AdminHome() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user || user.email !== ADMIN_EMAIL) {
+        router.push("/login");
+      } else {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p>Toegang controleren...</p>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-black text-white p-8 flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-8">Admin: Beheeropties</h1>
